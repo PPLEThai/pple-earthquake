@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดตามการช่วยเหลือแผ่นดินไหว - พรรคประชาชน</title>
+    
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="ติดตามการช่วยเหลือแผ่นดินไหว - พรรคประชาชน">
+    <meta property="og:description" content="ติดตามการลงพื้นที่ช่วยเหลือผู้ประสบภัยแผ่นดินไหว โดยพรรคประชาชน">
+    <meta property="og:image" content="https://earthquake.pplethai.org/images/thumbnail.png">
+    <meta property="og:url" content="https://earthquake.pplethai.org/kaitom-fieldwork">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ติดตามการช่วยเหลือแผ่นดินไหว - พรรคประชาชน">
+    <meta name="twitter:description" content="ติดตามการลงพื้นที่ช่วยเหลือผู้ประสบภัยแผ่นดินไหว โดยพรรคประชาชน">
+    <meta name="twitter:image" content="https://earthquake.pplethai.org/images/thumbnail.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="images/logo-pp.png" alt="Logo พรรคประชาชน" class="logo">
+            <div class="header-text">
+                <h1>ติดตามการช่วยเหลือแผ่นดินไหว</h1>
+                <p>พรรคประชาชน</p>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div id="map"></div>
+            <div class="list-container">
+                <h2>รายการลงสำรวจ</h2>
+                <div id="location-list"></div>
+                <button id="load-more" class="load-more-btn">ดูเพิ่มเติม</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html> 
