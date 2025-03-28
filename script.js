@@ -93,7 +93,7 @@ function createLocationItem(location) {
     } else {
         imageHtml = `
             <div class="image-container">
-                <img src="images/no-image.jpg" alt="ไม่มีรูปภาพ" loading="lazy">
+                <img src="images/logo-pp.png" alt="ไม่มีรูปภาพ" loading="lazy">
             </div>
         `;
     }
