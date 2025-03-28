@@ -17,7 +17,7 @@ html, body {
 }
 
 body {
-    font-family: 'Anakotmai', sans-serif;
+    font-family: 'Prompt', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);

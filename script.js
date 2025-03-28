@@ -87,7 +87,7 @@ function createLocationItem(location) {
     if (location.images && location.images.length > 0) {
         imageHtml = `
             <div class="image-container">
-                <img src="${location.images[0]}" alt="${location.location_name}" loading="lazy">
+                <img src="https://img.pplethai.org/unsafe/rs:fit:1000:1000:1/plain/${encodeURIComponent(location.images[0])}" alt="${location.location_name}" loading="lazy">
             </div>
         `;
     } else {

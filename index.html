@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ติดตามการช่วยเหลือแผ่นดินไหว - พรรคประชาชน</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    
+
     <!-- Social Media Meta Tags -->
     <meta property="og:title" content="ติดตามการช่วยเหลือแผ่นดินไหว - พรรคประชาชน">
     <meta property="og:description" content="ติดตามการลงพื้นที่ช่วยเหลือผู้ประสบภัยแผ่นดินไหว โดยพรรคประชาชน">
     <meta property="og:image" content="https://earthquake.peoplesparty.or.th/images/thumbnail.png">
     <meta property="og:url" content="https://earthquake.peoplesparty.or.th/kaitom-fieldwork">
-    
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ติดตามการช่วยเหลือแผ่นดินไหว - พรรคประชาชน">
     <meta name="twitter:description" content="ติดตามการลงพื้นที่ช่วยเหลือผู้ประสบภัยแผ่นดินไหว โดยพรรคประชาชน">
     <meta name="twitter:image" content="https://earthquake.peoplesparty.or.th/images/thumbnail.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -28,30 +29,36 @@
     <style>
         @font-face {
             font-family: 'Anakotmai';
-            src: url('font/anakotmai-light.woff2') format('woff2');
+            src: url('fonts/anakotmai-light.woff2') format('woff2'),
+                url('fonts/anakotmai-light.woff') format('woff'),
+                url('fonts/anakotmai-light.ttf') format('truetype');
             font-weight: 300;
             font-style: normal;
+            font-display: swap;
         }
+
         @font-face {
             font-family: 'Anakotmai';
-            src: url('font/anakotmai-regular.woff2') format('woff2');
-            font-weight: 400;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Anakotmai';
-            src: url('font/anakotmai-medium.woff2') format('woff2');
+            src: url('fonts/anakotmai-medium.woff2') format('woff2'),
+                url('fonts/anakotmai-medium.woff') format('woff'),
+                url('fonts/anakotmai-medium.ttf') format('truetype');
             font-weight: 500;
             font-style: normal;
+            font-display: swap;
         }
+
         @font-face {
             font-family: 'Anakotmai';
-            src: url('font/anakotmai-bold.woff2') format('woff2');
-            font-weight: 600;
+            src: url('fonts/anakotmai-bold.woff2') format('woff2'),
+                url('fonts/anakotmai-bold.woff') format('woff'),
+                url('fonts/anakotmai-bold.ttf') format('truetype');
+            font-weight: 700;
             font-style: normal;
+            font-display: swap;
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="header-content">
@@ -62,7 +69,7 @@
             </div>
         </div>
     </header>
-    
+
     <main>
         <div class="container">
             <div id="map"></div>
@@ -76,4 +83,5 @@
 
     <script src="script.js"></script>
 </body>
-</html> 
+
+</html>
