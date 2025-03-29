@@ -23,6 +23,13 @@ function formatDate(dateString) {
     });
 }
 
+// ฟังก์ชันสำหรับปิด popup ทั้งหมด
+function closeAllPopups() {
+    markers.forEach(marker => {
+        marker.getPopup().remove();
+    });
+}
+
 // ฟังก์ชันสำหรับสร้าง marker และ popup
 function createMarker(location) {
     const el = document.createElement('div');
@@ -51,8 +58,8 @@ function createMarker(location) {
             center: [location.longitude, location.latitude],
             zoom: 13
         });
-        marker.togglePopup();
-        highlightLocation(location);
+        closeAllPopups();
+        marker.setPopup(popup);
     });
 
     return marker;
@@ -113,10 +120,20 @@ function createLocationItem(location) {
             center: [location.longitude, location.latitude],
             zoom: 13
         });
-        markers.find(m => 
+        closeAllPopups();
+        const marker = markers.find(m => 
             m.getLngLat().lng === location.longitude && 
             m.getLngLat().lat === location.latitude
-        ).togglePopup();
+        );
+        if (marker) {
+            const popup = new maplibregl.Popup({ offset: 25 })
+                .setHTML(`
+                    <strong>${location.location_name}</strong><br>
+                    ${location.description || 'ไม่มีรายละเอียด'}<br>
+                    <small>${formatDate(location.date)}</small>
+                `);
+            marker.setPopup(popup);
+        }
         highlightLocation(location);
     });
     
@@ -159,9 +176,10 @@ async function fetchData() {
         markers.forEach(marker => marker.remove());
         markers = [];
         
-        // เก็บข้อมูลทั้งหมด
-        allLocations = data.data;
-        console.log(allLocations);
+        // เก็บข้อมูลทั้งหมดและเรียงตามวันที่ล่าสุด
+        allLocations = data.data.sort((a, b) => {
+            return new Date(b.date) - new Date(a.date);
+        });
         
         // สร้าง markers ทั้งหมด
         allLocations.forEach(location => {
@@ -187,8 +205,39 @@ async function fetchData() {
     }
 }
 
+function toggleList() {
+    const listContainer = document.querySelector('.list-container');
+    const toggleButton = document.querySelector('.toggle-list');
+    
+    listContainer.classList.toggle('collapsed');
+    toggleButton.classList.toggle('collapsed');
+    
+    // ปรับขนาดแผนที่เมื่อหุบ/กางรายการ
+    if (listContainer.classList.contains('collapsed')) {
+        map.resize();
+    } else {
+        // รอให้ animation เสร็จก่อน resize
+        setTimeout(() => {
+            map.resize();
+        }, 300);
+    }
+}
+
 // เพิ่ม event listener สำหรับปุ่ม "ดูเพิ่มเติม"
 document.getElementById('load-more').addEventListener('click', loadMore);
+
+// เพิ่ม event listener สำหรับปุ่มหุบ/กางรายการ
+document.querySelector('.toggle-list').addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleList();
+});
+
+// เพิ่ม event listener สำหรับส่วนหัวรายการ
+document.querySelector('.list-header').addEventListener('click', function(e) {
+    if (window.innerWidth <= 768) {
+        toggleList();
+    }
+});
 
 // เริ่มโหลดข้อมูล
 fetchData();
