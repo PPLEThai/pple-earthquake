@@ -272,6 +272,10 @@ function displayLocations() {
     const endIndex = currentPage * itemsPerPage;
     const locationsToShow = allLocations.slice(startIndex, endIndex);
     
+    // อัพเดทจำนวนเหตุการณ์ทั้งหมดในส่วนหัว
+    const listHeader = document.querySelector('.list-header h2');
+    listHeader.innerHTML = `รายการลงสำรวจ (${allLocations.length} รายการ)`;
+    
     // ล้างรายการเก่า
     document.getElementById('location-list').innerHTML = '';
     
