@@ -12,6 +12,8 @@ let allLocations = [];
 let currentPage = 1;
 const itemsPerPage = 20;
 let selectedLocationId = null;
+let currentImageIndex = 0;
+let currentImages = [];
 
 // ฟังก์ชันสำหรับแปลงวันที่
 function formatDate(dateString) {
@@ -30,6 +32,63 @@ function closeAllPopups() {
     });
 }
 
+// ฟังก์ชันสำหรับจัดการ modal gallery
+function openImageGallery(images, startIndex = 0) {
+    currentImages = images;
+    currentImageIndex = startIndex;
+    const modal = document.getElementById('image-gallery-modal');
+    const modalImage = document.getElementById('modal-image');
+    const imageCounter = document.getElementById('image-counter');
+    
+    modalImage.src = images[startIndex];
+    imageCounter.textContent = `${startIndex + 1} / ${images.length}`;
+    modal.style.display = 'block';
+}
+
+function closeImageGallery() {
+    const modal = document.getElementById('image-gallery-modal');
+    modal.style.display = 'none';
+}
+
+function showNextImage() {
+    if (currentImageIndex < currentImages.length - 1) {
+        currentImageIndex++;
+        updateModalImage();
+    }
+}
+
+function showPrevImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+        updateModalImage();
+    }
+}
+
+function updateModalImage() {
+    const modalImage = document.getElementById('modal-image');
+    const imageCounter = document.getElementById('image-counter');
+    modalImage.src = currentImages[currentImageIndex];
+    imageCounter.textContent = `${currentImageIndex + 1} / ${currentImages.length}`;
+}
+
+// เพิ่ม event listeners สำหรับ modal gallery
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('image-gallery-modal');
+    const closeBtn = document.querySelector('.modal-close');
+    const prevBtn = document.getElementById('prev-image');
+    const nextBtn = document.getElementById('next-image');
+    
+    closeBtn.addEventListener('click', closeImageGallery);
+    prevBtn.addEventListener('click', showPrevImage);
+    nextBtn.addEventListener('click', showNextImage);
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeImageGallery();
+        }
+    });
+});
+
 // ฟังก์ชันสำหรับสร้าง marker และ popup
 function createMarker(location) {
     const el = document.createElement('div');
@@ -44,10 +103,18 @@ function createMarker(location) {
     let imageHtml = '';
     if (location.images && location.images.length > 0) {
         imageHtml = `
-            <div style="margin-bottom: 10px; max-height: 200px; overflow: hidden;">
+            <div style="margin-bottom: 10px; max-height: 200px; overflow: hidden; position: relative;">
                 <img src="https://img.pplethai.org/unsafe/rs:fit:400:200:1/plain/${encodeURIComponent(location.images[0])}" 
                      alt="${location.location_name}" 
-                     style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                     style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px; cursor: pointer;"
+                     class="gallery-image"
+                     data-images='${JSON.stringify(location.images)}'>
+                ${location.images.length > 1 ? `
+                    <div class="image-count-badge">
+                        <i class="fas fa-camera"></i>
+                        ${location.images.length}
+                    </div>
+                ` : ''}
             </div>
         `;
     }
@@ -107,7 +174,17 @@ function createLocationItem(location) {
     if (location.images && location.images.length > 0) {
         imageHtml = `
             <div class="image-container">
-                <img src="https://img.pplethai.org/unsafe/rs:fit:1000:1000:1/plain/${encodeURIComponent(location.images[0])}" alt="${location.location_name}" loading="lazy">
+                <img src="https://img.pplethai.org/unsafe/rs:fit:1000:1000:1/plain/${encodeURIComponent(location.images[0])}" 
+                     alt="${location.location_name}" 
+                     class="gallery-image"
+                     data-images='${JSON.stringify(location.images)}'
+                     loading="lazy">
+                ${location.images.length > 1 ? `
+                    <div class="image-count-badge">
+                        <i class="fas fa-camera"></i>
+                        ${location.images.length}
+                    </div>
+                ` : ''}
             </div>
         `;
     } else {
@@ -128,7 +205,23 @@ function createLocationItem(location) {
         </div>
     `;
     
-    div.addEventListener('click', () => {
+    // เพิ่ม event listener สำหรับรูปภาพ
+    const galleryImage = div.querySelector('.gallery-image');
+    if (galleryImage) {
+        galleryImage.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const images = JSON.parse(galleryImage.dataset.images);
+            openImageGallery(images, 0);
+        });
+    }
+    
+    // เพิ่ม event listener สำหรับคลิกที่รายการ
+    div.addEventListener('click', (e) => {
+        // ถ้าคลิกที่รูปภาพ ให้ข้ามการทำงานนี้
+        if (e.target.closest('.image-container')) {
+            return;
+        }
+        
         map.flyTo({
             center: [location.longitude, location.latitude],
             zoom: 13
@@ -142,10 +235,18 @@ function createLocationItem(location) {
             let imageHtml = '';
             if (location.images && location.images.length > 0) {
                 imageHtml = `
-                    <div style="margin-bottom: 10px; max-height: 200px; overflow: hidden;">
+                    <div style="margin-bottom: 10px; max-height: 200px; overflow: hidden; position: relative;">
                         <img src="https://img.pplethai.org/unsafe/rs:fit:400:200:1/plain/${encodeURIComponent(location.images[0])}" 
                              alt="${location.location_name}" 
-                             style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                             style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px; cursor: pointer;"
+                             class="gallery-image"
+                             data-images='${JSON.stringify(location.images)}'>
+                        ${location.images.length > 1 ? `
+                            <div class="image-count-badge">
+                                <i class="fas fa-camera"></i>
+                                ${location.images.length}
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }
@@ -270,6 +371,14 @@ document.querySelector('.toggle-list').addEventListener('click', function(e) {
 document.querySelector('.list-header').addEventListener('click', function(e) {
     if (window.innerWidth <= 768) {
         toggleList();
+    }
+});
+
+// เพิ่ม event listener สำหรับรูปภาพใน popup
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('gallery-image')) {
+        const images = JSON.parse(e.target.dataset.images);
+        openImageGallery(images, 0);
     }
 });
 
