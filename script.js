@@ -41,11 +41,24 @@ function createMarker(location) {
     el.style.border = '2px solid white';
     el.style.boxShadow = '0 0 4px rgba(0,0,0,0.3)';
 
+    let imageHtml = '';
+    if (location.images && location.images.length > 0) {
+        imageHtml = `
+            <div style="margin-bottom: 10px; max-height: 200px; overflow: hidden;">
+                <img src="https://img.pplethai.org/unsafe/rs:fit:400:200:1/plain/${encodeURIComponent(location.images[0])}" 
+                     alt="${location.location_name}" 
+                     style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;">
+            </div>
+        `;
+    }
+
     const popup = new maplibregl.Popup({ offset: 25 })
         .setHTML(`
+            ${imageHtml}
             <strong>${location.location_name}</strong><br>
             ${location.description || 'ไม่มีรายละเอียด'}<br>
-            <small>${formatDate(location.date)}</small>
+            <small>${formatDate(location.date)}</small><br>
+            <small style="color: #666;">${location.full_name}</small>
         `);
 
     const marker = new maplibregl.Marker(el)
@@ -126,11 +139,23 @@ function createLocationItem(location) {
             m.getLngLat().lat === location.latitude
         );
         if (marker) {
+            let imageHtml = '';
+            if (location.images && location.images.length > 0) {
+                imageHtml = `
+                    <div style="margin-bottom: 10px; max-height: 200px; overflow: hidden;">
+                        <img src="https://img.pplethai.org/unsafe/rs:fit:400:200:1/plain/${encodeURIComponent(location.images[0])}" 
+                             alt="${location.location_name}" 
+                             style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                    </div>
+                `;
+            }
             const popup = new maplibregl.Popup({ offset: 25 })
                 .setHTML(`
+                    ${imageHtml}
                     <strong>${location.location_name}</strong><br>
                     ${location.description || 'ไม่มีรายละเอียด'}<br>
-                    <small>${formatDate(location.date)}</small>
+                    <small>${formatDate(location.date)}</small><br>
+                    <small style="color: #666;">${location.full_name}</small>
                 `);
             marker.setPopup(popup);
         }
