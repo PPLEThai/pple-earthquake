@@ -177,9 +177,17 @@ async function fetchData() {
         markers.forEach(marker => marker.remove());
         markers = [];
         
-        // เก็บข้อมูลทั้งหมดและเรียงตามวันที่ล่าสุด
+        // เก็บข้อมูลทั้งหมดและเรียงตามวันที่และเวลา
         allLocations = data.data.sort((a, b) => {
-            return new Date(b.date) - new Date(a.date);
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            
+            // ถ้าวันที่เท่ากัน ให้เรียงตามลำดับ array จากหลังมาหัว
+            if (dateA.getTime() === dateB.getTime()) {
+                return data.data.indexOf(b) - data.data.indexOf(a);
+            }
+            
+            return dateB.getTime() - dateA.getTime();
         });
         
         // สร้าง markers ทั้งหมด
