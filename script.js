@@ -286,15 +286,15 @@ function createEngineerItem(location) {
     let statusColor, statusEmoji;
     switch (location.status) {
         case 'รอนัดหมาย':
-            statusColor = '#ff6a13'; // สีส้ม
+            statusColor = '#95a5a6'; // สีเทา
             statusEmoji = '⏳';
             break;
         case 'นัดหมายแล้ว':
-            statusColor = '#4a90e2'; // สีฟ้า
+            statusColor = '#f1c40f'; // สีเหลือง
             statusEmoji = '📅';
             break;
         case 'สำรวจแล้ว':
-            statusColor = '#2ecc71'; // สีเขียว
+            statusColor = '#3498db'; // สีฟ้า
             statusEmoji = '✅';
             break;
         default:
@@ -348,13 +348,13 @@ function createEngineerMarker(location) {
     let markerColor;
     switch (location.status) {
         case 'รอนัดหมาย':
-            markerColor = '#ff6a13'; // สีส้ม
+            markerColor = '#95a5a6'; // สีเทา
             break;
         case 'นัดหมายแล้ว':
-            markerColor = '#4a90e2'; // สีฟ้า
+            markerColor = '#f1c40f'; // สีเหลือง
             break;
         case 'สำรวจแล้ว':
-            markerColor = '#2ecc71'; // สีเขียว
+            markerColor = '#3498db'; // สีฟ้า
             break;
         default:
             markerColor = '#95a5a6'; // สีเทา
@@ -365,7 +365,7 @@ function createEngineerMarker(location) {
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 24 24" fill="${markerColor}">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
         </svg>
-    `;
+    `
 
     // กำหนด emoji ตามสถานะ
     let statusEmoji;
@@ -433,24 +433,24 @@ function displayLocations() {
     if (currentTab === 'engineer') {
         const statusSummary = document.createElement('div');
         statusSummary.className = 'status-summary';
-        
+
         // คำนวณจำนวนแต่ละสถานะ
         const waitingCount = engineerLocations.filter(item => item.status === 'รอนัดหมาย').length;
         const scheduledCount = engineerLocations.filter(item => item.status === 'นัดหมายแล้ว').length;
         const completedCount = engineerLocations.filter(item => item.status === 'สำรวจแล้ว').length;
 
         statusSummary.innerHTML = `
-            <div class="status-item" style="color: #ff6a13;">
+            <div class="status-item" style="color: #95a5a6;">
                 <span class="status-emoji">⏳</span>
                 <span class="status-text">รอนัดหมาย</span>
                 <span class="status-count">${waitingCount}</span>
             </div>
-            <div class="status-item" style="color: #4a90e2;">
+            <div class="status-item" style="color: #f1c40f;">
                 <span class="status-emoji">📅</span>
                 <span class="status-text">นัดหมายแล้ว</span>
                 <span class="status-count">${scheduledCount}</span>
             </div>
-            <div class="status-item" style="color: #2ecc71;">
+            <div class="status-item" style="color: #3498db;">
                 <span class="status-emoji">✅</span>
                 <span class="status-text">สำรวจแล้ว</span>
                 <span class="status-count">${completedCount}</span>
