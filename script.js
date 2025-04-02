@@ -15,7 +15,7 @@ const itemsPerPage = 20;
 let selectedLocationId = null;
 let currentImageIndex = 0;
 let currentImages = [];
-let currentTab = 'survey';
+let currentTab = 'engineer';
 
 // ฟังก์ชันสำหรับแปลงวันที่
 function formatDate(dateString) {
@@ -421,17 +421,48 @@ function displayLocations() {
     // อัพเดทจำนวนเหตุการณ์ทั้งหมดในส่วนหัว
     const listHeader = document.querySelector('.list-header');
     listHeader.querySelector('.tab-container').innerHTML = `
-        <button class="tab-button ${currentTab === 'survey' ? 'active' : ''}" data-tab="survey">พรรคลงสำรวจ (${allLocations.length} รายการ)</button>
-        <button class="tab-button ${currentTab === 'engineer' ? 'active' : ''}" data-tab="engineer">สมาคมวิศวกรโครงสร้างลงตรวจ (${engineerLocations.length} รายการ)</button>
+        <button class="tab-button ${currentTab === 'engineer' ? 'active' : ''}" data-tab="engineer">แจ้งตรวจโครงสร้าง (${engineerLocations.length} รายการ)</button>
+        <button class="tab-button ${currentTab === 'survey' ? 'active' : ''}" data-tab="survey">แจ้งเรื่องอื่น ๆ (${allLocations.length} รายการ)</button>
     `;
 
     // ล้างรายการเก่า
-    document.getElementById('location-list').innerHTML = '';
+    const locationList = document.getElementById('location-list');
+    locationList.innerHTML = '';
+
+    // เพิ่มส่วนสรุปสถานะสำหรับ Engineer Items
+    if (currentTab === 'engineer') {
+        const statusSummary = document.createElement('div');
+        statusSummary.className = 'status-summary';
+        
+        // คำนวณจำนวนแต่ละสถานะ
+        const waitingCount = engineerLocations.filter(item => item.status === 'รอนัดหมาย').length;
+        const scheduledCount = engineerLocations.filter(item => item.status === 'นัดหมายแล้ว').length;
+        const completedCount = engineerLocations.filter(item => item.status === 'สำรวจแล้ว').length;
+
+        statusSummary.innerHTML = `
+            <div class="status-item" style="color: #ff6a13;">
+                <span class="status-emoji">⏳</span>
+                <span class="status-text">รอนัดหมาย</span>
+                <span class="status-count">${waitingCount}</span>
+            </div>
+            <div class="status-item" style="color: #4a90e2;">
+                <span class="status-emoji">📅</span>
+                <span class="status-text">นัดหมายแล้ว</span>
+                <span class="status-count">${scheduledCount}</span>
+            </div>
+            <div class="status-item" style="color: #2ecc71;">
+                <span class="status-emoji">✅</span>
+                <span class="status-text">สำรวจแล้ว</span>
+                <span class="status-count">${completedCount}</span>
+            </div>
+        `;
+        locationList.appendChild(statusSummary);
+    }
 
     // แสดงรายการใหม่
     locationsToShow.forEach(location => {
         const locationItem = currentTab === 'survey' ? createLocationItem(location) : createEngineerItem(location);
-        document.getElementById('location-list').appendChild(locationItem);
+        locationList.appendChild(locationItem);
     });
 
     // ปรับสถานะปุ่ม "ดูเพิ่มเติม"
@@ -579,10 +610,6 @@ document.querySelector('.toggle-list').addEventListener('click', function (e) {
     console.log('toggle-list');
     e.stopPropagation();
     toggleList();
-    // if (e.target.classList.contains('fa-chevron-down') || e.target.classList.contains('fa-chevron-up')) {
-    //     e.stopPropagation();
-    //     toggleList();
-    // }
 });
 
 // เพิ่ม event listener สำหรับรูปภาพใน popup

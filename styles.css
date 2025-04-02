@@ -425,22 +425,69 @@ main {
 }
 
 .tab-button {
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 400;
-    transition: all 0.2s;
-    border-radius: 4px;
+    background: none !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    padding: 0.5rem 1rem !important;
+    cursor: pointer !important;
+    font-size: 0.9rem !important;
+    font-weight: 400 !important;
+    transition: all 0.2s !important;
+    border-radius: 4px !important;
 }
 
 .tab-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .tab-button.active {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2) !important;
     color: white;
+}
+
+.status-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 10px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.status-emoji {
+    font-size: 1.2em;
+}
+
+.status-text {
+    font-size: 0.9em;
+}
+
+.status-count {
+    background-color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    border: 1px solid #dee2e6;
+}
+
+@media (max-width: 768px) {
+    .status-text {
+        display: none;
+    }
+    
+    .status-emoji {
+        font-size: 1.5em;
+    }
+    
+    .status-summary {
+        justify-content: center;
+        gap: 20px;
+    }
 }
