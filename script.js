@@ -742,5 +742,7 @@ document.addEventListener("click", function (e) {
   }
 });
 
-// เริ่มโหลดข้อมูลทั้งหมด
-fetchAllData();
+map.on("load", function () {
+  // เริ่มโหลดข้อมูลทั้งหมด
+  fetchAllData();
+});
