@@ -96,12 +96,13 @@ function createMarker(location) {
     const el = document.createElement('div');
     el.className = 'marker';
 
-    // สร้าง SVG marker
-    el.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 24 24" fill="#ff6a13">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-        </svg>
-    `;
+    // สร้างวงกลมแทน icon
+    el.style.width = '20px';
+    el.style.height = '20px';
+    el.style.backgroundColor = '#ff6a13'; // สีส้มสำหรับข้อมูลสำรวจ
+    el.style.borderRadius = '50%';
+    el.style.border = '2px solid white';
+    el.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1)';
 
     let imageHtml = '';
     if (location.images && location.images.length > 0) {
@@ -341,9 +342,6 @@ function createEngineerItem(location) {
 
 // ฟังก์ชันสำหรับสร้าง marker และ popup สำหรับข้อมูลวิศวกร
 function createEngineerMarker(location) {
-    const el = document.createElement('div');
-    el.className = 'marker';
-
     // กำหนดสีตามสถานะ
     let markerColor;
     switch (location.status) {
@@ -359,13 +357,6 @@ function createEngineerMarker(location) {
         default:
             markerColor = '#95a5a6'; // สีเทา
     }
-
-    // สร้าง SVG marker
-    el.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 24 24" fill="${markerColor}">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-        </svg>
-    `
 
     // กำหนด emoji ตามสถานะ
     let statusEmoji;
@@ -383,31 +374,22 @@ function createEngineerMarker(location) {
             statusEmoji = '❓';
     }
 
-    const popup = new maplibregl.Popup({
-            offset: 25
-        })
-        .setHTML(`
-            <strong>${location.locationName}</strong><br>
-            <small style="color: ${markerColor}; font-weight: bold;">
-                ${statusEmoji} สถานะ: ${location.status}
-            </small>
-        `);
+    // สร้างจุดบนแผนที่
+    const point = {
+        type: 'Feature',
+        properties: {
+            color: markerColor,
+            location: location,
+            statusEmoji: statusEmoji,
+            status: location.status
+        },
+        geometry: {
+            type: 'Point',
+            coordinates: [location.longitude, location.latitude]
+        }
+    };
 
-    const marker = new maplibregl.Marker(el)
-        .setLngLat([location.longitude, location.latitude])
-        .setPopup(popup)
-        .addTo(map);
-
-    marker.getElement().addEventListener('click', () => {
-        map.flyTo({
-            center: [location.longitude, location.latitude],
-            zoom: 13
-        });
-        closeAllPopups();
-        marker.setPopup(popup);
-    });
-
-    return marker;
+    return point;
 }
 
 // ฟังก์ชันสำหรับแสดงรายการ
@@ -476,27 +458,117 @@ function displayLocations() {
 
 // ฟังก์ชันสำหรับอัพเดท markers ตาม tab ที่เลือก
 function updateMarkers() {
-    // ลบ markers ทั้งหมด
-    markers.forEach(marker => marker.remove());
-    markers = [];
+    // ลบ layer เก่าออก
+    if (map.getLayer('points')) {
+        map.removeLayer('points');
+    }
+    if (map.getSource('points')) {
+        map.removeSource('points');
+    }
 
-    // สร้าง markers ใหม่ตาม tab ที่เลือก
+    // สร้าง layer ใหม่ตาม tab ที่เลือก
     const locations = currentTab === 'survey' ? allLocations : engineerLocations;
-    locations.forEach(location => {
-        const marker = currentTab === 'survey' ? createMarker(location) : createEngineerMarker(location);
-        markers.push(marker);
+    const points = locations.map(location => 
+        currentTab === 'survey' ? createSurveyPoint(location) : createEngineerMarker(location)
+    );
+
+    // เพิ่ม source และ layer
+    map.addSource('points', {
+        type: 'geojson',
+        data: {
+            type: 'FeatureCollection',
+            features: points
+        }
     });
 
-    // ปรับขอบเขตแผนที่ให้แสดงทุก marker
-    if (markers.length > 0) {
+    map.addLayer({
+        id: 'points',
+        type: 'circle',
+        source: 'points',
+        paint: {
+            'circle-radius': 7,
+            'circle-color': ['get', 'color'],
+            'circle-stroke-width': 1,
+            'circle-opacity': 0.8,
+            'circle-stroke-color': '#ffffff'
+        }
+    });
+
+    // เพิ่ม event listener สำหรับคลิกที่จุด
+    map.on('click', 'points', (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const location = JSON.parse(e.features[0].properties.location);
+        const properties = e.features[0].properties;
+        console.log(location);
+
+        let popupContent;
+        if (currentTab === 'survey') {
+            const images = location.images || [];
+            let imagesHtml = '';
+            if (images.length > 0) {
+                imagesHtml = `<img src="${images[0]}" style="max-height: 150px; margin: 5px 0;">`;
+            }
+            
+            popupContent = `
+                <strong>${location.location_name}</strong><br>
+                ${imagesHtml}<br>
+                ${location.description || 'ไม่มีรายละเอียด'}<br>
+                <small>${formatDate(location.date)}</small><br>
+                <small style="color: #666;">${location.full_name}</small>
+            `;
+        } else {
+            popupContent = `
+                <strong>${location.locationName}</strong><br>
+                <small style="color: ${properties.color}; font-weight: bold;">
+                    ${properties.statusEmoji} สถานะ: ${properties.status}
+                </small>
+            `;
+        }
+
+        const popup = new maplibregl.Popup({
+            offset: 25
+        }).setHTML(popupContent);
+
+        // เปิด popup
+        popup.setLngLat(coordinates).addTo(map);
+
+        // ย้ายแผนที่ไปที่จุดที่คลิก
+        map.flyTo({
+            center: coordinates,
+            zoom: 13
+        });
+
+        // ไฮไลท์รายการที่เลือก
+        if (location) {
+            highlightLocation(location);
+        }
+    });
+
+    // ปรับขอบเขตแผนที่ให้แสดงทุกจุด
+    if (points.length > 0) {
         const bounds = new maplibregl.LngLatBounds();
-        markers.forEach(marker => {
-            bounds.extend(marker.getLngLat());
+        points.forEach(point => {
+            bounds.extend(point.geometry.coordinates);
         });
         map.fitBounds(bounds, {
             padding: 50
         });
     }
+}
+
+// ฟังก์ชันสำหรับสร้างจุดสำหรับข้อมูลสำรวจ
+function createSurveyPoint(location) {
+    return {
+        type: 'Feature',
+        properties: {
+            color: '#ff6a13',
+            location: location
+        },
+        geometry: {
+            type: 'Point',
+            coordinates: [location.longitude, location.latitude]
+        }
+    };
 }
 
 // ฟังก์ชันสำหรับโหลดข้อมูลเพิ่มเติม
