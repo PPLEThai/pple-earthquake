@@ -426,7 +426,7 @@ function displayLocations() {
   listHeader.querySelector(".tab-container").innerHTML = `
         <button class="tab-button ${
           currentTab === "engineer" ? "active" : ""
-        }" data-tab="engineer">แจ้งตรวจโครงสร้าง (${
+        }" data-tab="engineer">แจ้งสำรวจโครงสร้าง (${
     engineerLocations.length
   } รายการ)</button>
         <button class="tab-button ${
