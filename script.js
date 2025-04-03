@@ -7,6 +7,56 @@ const map = new maplibregl.Map({
   zoom: 6,
 });
 
+// เพิ่ม event listener สำหรับคลิกที่จุด
+map.on("click", "points", (e) => {
+  const coordinates = e.features[0].geometry.coordinates.slice();
+  const location = JSON.parse(e.features[0].properties.location);
+  const properties = e.features[0].properties;
+  console.log(location);
+
+  let popupContent;
+  if (currentTab === "survey") {
+    const images = location.images || [];
+    let imagesHtml = "";
+    if (images.length > 0) {
+      imagesHtml = `<img src="${images[0]}" style="max-height: 150px; margin: 5px 0;">`;
+    }
+
+    popupContent = `
+                <strong>${location.location_name}</strong><br>
+                ${imagesHtml}<br>
+                ${location.description || "ไม่มีรายละเอียด"}<br>
+                <small>${formatDate(location.date)}</small><br>
+                <small style="color: #666;">${location.full_name}</small>
+            `;
+  } else {
+    popupContent = `
+                <strong>${location.locationName}</strong><br>
+                <small style="color: ${properties.color}; font-weight: bold;">
+                    ${properties.statusEmoji} สถานะ: ${properties.status}
+                </small>
+            `;
+  }
+
+  const popup = new maplibregl.Popup({
+    offset: 25,
+  }).setHTML(popupContent);
+
+  // เปิด popup
+  popup.setLngLat(coordinates).addTo(map);
+
+  // ย้ายแผนที่ไปที่จุดที่คลิก
+  map.flyTo({
+    center: coordinates,
+    zoom: 13,
+  });
+
+  // ไฮไลท์รายการที่เลือก
+  if (location) {
+    highlightLocation(location);
+  }
+});
+
 // เก็บข้อมูล markers และข้อมูลทั้งหมด
 let markers = [];
 let allLocations = [];
@@ -540,56 +590,6 @@ function updateMarkers() {
       "circle-opacity": 0.8,
       "circle-stroke-color": "#ffffff",
     },
-  });
-
-  // เพิ่ม event listener สำหรับคลิกที่จุด
-  map.on("click", "points", (e) => {
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const location = JSON.parse(e.features[0].properties.location);
-    const properties = e.features[0].properties;
-    console.log(location);
-
-    let popupContent;
-    if (currentTab === "survey") {
-      const images = location.images || [];
-      let imagesHtml = "";
-      if (images.length > 0) {
-        imagesHtml = `<img src="${images[0]}" style="max-height: 150px; margin: 5px 0;">`;
-      }
-
-      popupContent = `
-                <strong>${location.location_name}</strong><br>
-                ${imagesHtml}<br>
-                ${location.description || "ไม่มีรายละเอียด"}<br>
-                <small>${formatDate(location.date)}</small><br>
-                <small style="color: #666;">${location.full_name}</small>
-            `;
-    } else {
-      popupContent = `
-                <strong>${location.locationName}</strong><br>
-                <small style="color: ${properties.color}; font-weight: bold;">
-                    ${properties.statusEmoji} สถานะ: ${properties.status}
-                </small>
-            `;
-    }
-
-    const popup = new maplibregl.Popup({
-      offset: 25,
-    }).setHTML(popupContent);
-
-    // เปิด popup
-    popup.setLngLat(coordinates).addTo(map);
-
-    // ย้ายแผนที่ไปที่จุดที่คลิก
-    map.flyTo({
-      center: coordinates,
-      zoom: 13,
-    });
-
-    // ไฮไลท์รายการที่เลือก
-    if (location) {
-      highlightLocation(location);
-    }
   });
 
   // ปรับขอบเขตแผนที่ให้แสดงทุกจุด
