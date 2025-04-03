@@ -495,7 +495,7 @@ function displayLocations() {
     const descriptionDiv = document.createElement("div");
     descriptionDiv.className = "description";
     descriptionDiv.innerHTML = `
-            <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #666;">โดยความร่วมมือระหว่าง สมาคมวิศวกรโครงสร้างแห่งประเทศไทย กับ พรรคประชาชน</p>
+            <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #666;">โดยความร่วมมือระหว่าง <a style="color: #666;" href="https://www.tsea.or.th/" target="_blank">สมาคมวิศวกรโครงสร้างแห่งประเทศไทย</a> กับ <a style="color: #666;" href="https://peoplesparty.or.th/" target="_blank">พรรคประชาชน</a></p>
         `;
     locationList.appendChild(descriptionDiv);
 
