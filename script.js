@@ -358,15 +358,15 @@ function createEngineerItem(location) {
   switch (location.status) {
     case "รอนัดหมาย":
       statusColor = "#95a5a6"; // สีเทา
-      statusEmoji = "⏳";
+      statusEmoji = "⚪";
       break;
     case "นัดหมายแล้ว":
       statusColor = "#f1c40f"; // สีเหลือง
-      statusEmoji = "📅";
+      statusEmoji = "🟡";
       break;
     case "สำรวจแล้ว":
       statusColor = "#3498db"; // สีฟ้า
-      statusEmoji = "✅";
+      statusEmoji = "🔵";
       break;
     default:
       statusColor = "#95a5a6"; // สีเทา
@@ -432,13 +432,13 @@ function createEngineerMarker(location) {
   let statusEmoji;
   switch (location.status) {
     case "รอนัดหมาย":
-      statusEmoji = "⏳";
+      statusEmoji = "⚪";
       break;
     case "นัดหมายแล้ว":
-      statusEmoji = "📅";
+      statusEmoji = "🟡";
       break;
     case "สำรวจแล้ว":
-      statusEmoji = "✅";
+      statusEmoji = "🔵";
       break;
     default:
       statusEmoji = "❓";
@@ -515,17 +515,17 @@ function displayLocations() {
 
     statusSummary.innerHTML = `
             <div class="status-item" style="color: #95a5a6;">
-                <span class="status-emoji">⏳</span>
+                <span class="status-emoji">⚪</span>
                 <span class="status-text">รอนัดหมาย</span>
                 <span class="status-count">${waitingCount}</span>
             </div>
             <div class="status-item" style="color: #f1c40f;">
-                <span class="status-emoji">📅</span>
+                <span class="status-emoji">🟡</span>
                 <span class="status-text">นัดหมายแล้ว</span>
                 <span class="status-count">${scheduledCount}</span>
             </div>
             <div class="status-item" style="color: #3498db;">
-                <span class="status-emoji">✅</span>
+                <span class="status-emoji">🔵</span>
                 <span class="status-text">สำรวจแล้ว</span>
                 <span class="status-count">${completedCount}</span>
             </div>
